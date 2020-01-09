@@ -22,14 +22,14 @@
         <activity android:name=".TermsConditionActivity" />
         <activity android:name=".SafetyActivity" />
         <activity android:name=".Rules" />
-        <activity android:name=".SignupActivity" >   <intent-filter>
+        <activity android:name=".SignupActivity" > </activity>
+        <activity android:name=".DashboardActivity" />
+        <activity android:name=".SplashActivity" />
+        <activity android:name=".LoginActivity" >  <intent-filter>
             <action android:name="android.intent.action.MAIN" />
 
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter></activity>
-        <activity android:name=".DashboardActivity" />
-        <activity android:name=".SplashActivity" />
-        <activity android:name=".LoginActivity" />
     </application>
 
 </manifest>
