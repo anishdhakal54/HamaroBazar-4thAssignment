@@ -3,8 +3,10 @@ package com.anish.hamrobazarapi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.widget.Toast;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -16,11 +18,19 @@ public class SplashActivity extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        },100);
+                SharedPreferences sharedPreferences = getSharedPreferences("Term",MODE_PRIVATE);
+                Boolean agree = sharedPreferences.getBoolean("agree",false);
 
+                if(agree.equals(true) ){
+                    Toast.makeText(SplashActivity.this, "Success", Toast.LENGTH_SHORT).show();
+                    Intent myIntent = new Intent(SplashActivity.this, DashboardActivity.class);
+                    startActivity(myIntent);
+                }else{
+                    Intent intent = new Intent(SplashActivity.this,WelcomeActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            }
+        },2000);
     }
 }
