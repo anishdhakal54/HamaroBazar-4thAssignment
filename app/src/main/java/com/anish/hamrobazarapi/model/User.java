@@ -1,5 +1,7 @@
 package com.anish.hamrobazarapi.model;
 
+import android.content.Intent;
+
 public class User {
     private String fullName;
     private String username;
