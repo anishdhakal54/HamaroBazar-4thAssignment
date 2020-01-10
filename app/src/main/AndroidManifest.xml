@@ -16,8 +16,6 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity android:name=".Login_Dialogue"></activity>
-        <activity android:name=".TrendingActivity" ></activity>
-        <activity android:name=".ListedAdsActivity" ></activity>
         <activity android:name=".WelcomeActivity" ></activity>
         <activity android:name=".TermsConditionActivity" ></activity>
         <activity android:name=".SafetyActivity" ></activity>
