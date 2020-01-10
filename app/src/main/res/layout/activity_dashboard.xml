@@ -144,7 +144,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="15sp"
                     android:textStyle="bold"
-                    android:text="Popular Trending Ads"
+                    android:text="Available Products"
                     />
                 <Button
                     android:layout_margin="10dp"

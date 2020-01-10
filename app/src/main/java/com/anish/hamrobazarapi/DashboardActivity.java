@@ -85,19 +85,48 @@ public class DashboardActivity extends AppCompatActivity {
 
         //recycleview first
         recyclerView = findViewById(R.id.recyclerView);
+        recyclerViewSecond=findViewById(R.id.recyclerViewSecond);
 
         ProductAPI productAPI = Url.getInstance().create(ProductAPI.class);
-        Call<List<Product>> listCall = productAPI.getRecentProduct();
+        Call<List<Product>> listCall = productAPI.getPopularProduct();
         listCall.enqueue(new Callback<List<Product>>() {
             @Override
             public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
+                if (!response.isSuccessful()) {
+                    Toast.makeText(DashboardActivity.this, "Code " + response.code(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 List<Product> product = response.body();
 
-
                 ProductAdapter productAdapter = new ProductAdapter(DashboardActivity.this, product);
-
                 recyclerView.setAdapter(productAdapter);
                 recyclerView.setLayoutManager(new LinearLayoutManager(DashboardActivity.this, LinearLayoutManager.HORIZONTAL, false));
+            }
+
+
+
+            @Override
+            public void onFailure(Call<List<Product>> call, Throwable t) {
+                Toast.makeText(DashboardActivity.this, "failed" + t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+        Call<List<Product>> recentcall = productAPI.getRecentProduct();
+        recentcall.enqueue(new Callback<List<Product>>() {
+            @Override
+            public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
+                if(!response.isSuccessful()){
+                    Toast.makeText(DashboardActivity.this, "", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                List<Product> product = response.body();
+
+                ProductAdapter productAdapter = new ProductAdapter(DashboardActivity.this, product);
+                recyclerViewSecond.setAdapter(productAdapter);
+                recyclerViewSecond.setLayoutManager(new LinearLayoutManager(DashboardActivity.this, LinearLayoutManager.HORIZONTAL, false));
+
 
             }
 
@@ -107,6 +136,8 @@ public class DashboardActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
     private void loadCurrentUser() {
 
