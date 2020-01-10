@@ -3,6 +3,7 @@ package com.anish.hamrobazarapi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
+
 
 
 import com.anish.hamrobazarapi.API.ProductAPI;
@@ -52,7 +54,6 @@ public class DashboardActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.img:
-
         }
         return true;
     }*/
@@ -67,12 +68,13 @@ public class DashboardActivity extends AppCompatActivity {
         icon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadCurrentUser();
                 Intent intent = new Intent(DashboardActivity.this, LoginActivity.class);
                 startActivity(intent);
             }
         });
 
+        Toolbar toolbar=findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         int images[] = {R.drawable.yamaha, R.drawable.car, R.drawable.bike, R.drawable.house, R.drawable.furnitures, R.drawable.music};
 
@@ -105,27 +107,27 @@ public class DashboardActivity extends AppCompatActivity {
             }
 
 
+
             @Override
             public void onFailure(Call<List<Product>> call, Throwable t) {
                 Toast.makeText(DashboardActivity.this, "failed" + t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 
-
-        Call<List<Product>> recentcall = productAPI.getRecentProduct();
-        recentcall.enqueue(new Callback<List<Product>>() {
+        Call<List<Product>> recentCall = productAPI.getRecentProduct();
+        recentCall.enqueue(new Callback<List<Product>>() {
             @Override
             public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
                 if (!response.isSuccessful()) {
-                    Toast.makeText(DashboardActivity.this, "", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DashboardActivity.this, "Code " + response.code(), Toast.LENGTH_SHORT).show();
                     return;
                 }
+
                 List<Product> product = response.body();
 
                 ProductAdapter productAdapter = new ProductAdapter(DashboardActivity.this, product);
                 recyclerViewSecond.setAdapter(productAdapter);
                 recyclerViewSecond.setLayoutManager(new LinearLayoutManager(DashboardActivity.this, LinearLayoutManager.HORIZONTAL, false));
-
 
             }
 
@@ -135,11 +137,9 @@ public class DashboardActivity extends AppCompatActivity {
             }
         });
         loadCurrentUser();
-
     }
 
-
-    private void loadCurrentUser() {
+    private void loadCurrentUser(){
         UsersAPI userLoginAPI = Url.getInstance().create(UsersAPI.class);
         Call<User> userLoginCall = userLoginAPI.getUserDetails(Url.token);
 
@@ -162,6 +162,10 @@ public class DashboardActivity extends AppCompatActivity {
             }
         });
     }
+
+
+
+
 
     public void flipperimages(int image) {
         ImageView imageView = new ImageView(this);
