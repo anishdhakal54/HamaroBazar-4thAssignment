@@ -6,8 +6,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,6 +14,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
+
 
 import com.anish.hamrobazarapi.API.ProductAPI;
 import com.anish.hamrobazarapi.API.UsersAPI;
@@ -42,12 +41,12 @@ public class DashboardActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.menu,menu);
+        menuInflater.inflate(R.menu.menu, menu);
         return true;
     }
 
     ViewFlipper vflipper;
-    private RecyclerView recyclerView,recyclerViewSecond;
+    private RecyclerView recyclerView, recyclerViewSecond;
 
    /* @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -64,31 +63,29 @@ public class DashboardActivity extends AppCompatActivity {
         setContentView(R.layout.activity_dashboard);
 
 
-        icon=findViewById(R.id.icon);
+        icon = findViewById(R.id.icon);
         icon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(DashboardActivity.this,LoginActivity.class);
+                loadCurrentUser();
+                Intent intent = new Intent(DashboardActivity.this, LoginActivity.class);
                 startActivity(intent);
-//                ShowPopup(v);
             }
         });
-        int images[]={R.drawable.yamaha,R.drawable.car,R.drawable.bike,R.drawable.house,R.drawable.furnitures,R.drawable.music};
-
-        vflipper=findViewById(R.id.vflipper);
 
 
+        int images[] = {R.drawable.yamaha, R.drawable.car, R.drawable.bike, R.drawable.house, R.drawable.furnitures, R.drawable.music};
 
-        for (int image:images)
-        {
+        vflipper = findViewById(R.id.vflipper);
+
+
+        for (int image : images) {
             flipperimages(image);
         }
 
         //recycleview first
         recyclerView = findViewById(R.id.recyclerView);
-        LinearLayoutManager manager = new LinearLayoutManager(DashboardActivity.this);
-        recyclerView.setLayoutManager(manager);
-        recyclerView.setHasFixedSize(true);
+
         ProductAPI productAPI = Url.getInstance().create(ProductAPI.class);
         Call<List<Product>> listCall = productAPI.getRecentProduct();
         listCall.enqueue(new Callback<List<Product>>() {
@@ -96,9 +93,11 @@ public class DashboardActivity extends AppCompatActivity {
             public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
                 List<Product> product = response.body();
 
+
                 ProductAdapter productAdapter = new ProductAdapter(DashboardActivity.this, product);
+
                 recyclerView.setAdapter(productAdapter);
-                recyclerView.setLayoutManager(new LinearLayoutManager(DashboardActivity.this,LinearLayoutManager.HORIZONTAL, false));
+                recyclerView.setLayoutManager(new LinearLayoutManager(DashboardActivity.this, LinearLayoutManager.HORIZONTAL, false));
 
             }
 
@@ -108,7 +107,6 @@ public class DashboardActivity extends AppCompatActivity {
             }
         });
     }
-
 
     private void loadCurrentUser() {
 
@@ -136,8 +134,7 @@ public class DashboardActivity extends AppCompatActivity {
         });
     }
 
-    public void flipperimages (int image)
-    {
+    public void flipperimages(int image) {
         ImageView imageView = new ImageView(this);
         imageView.setBackgroundResource(image);
 
