@@ -21,9 +21,6 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-//        int i = R.drawable.bike;
-//        Toast.makeText(this, i+"", Toast.LENGTH_SHORT).show();
         setContentView(R.layout.activity_login);
         etUsername = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);

@@ -85,7 +85,7 @@ public class DashboardActivity extends AppCompatActivity {
 
         //recycleview first
         recyclerView = findViewById(R.id.recyclerView);
-        recyclerViewSecond=findViewById(R.id.recyclerViewSecond);
+        recyclerViewSecond = findViewById(R.id.recyclerViewSecond);
 
         ProductAPI productAPI = Url.getInstance().create(ProductAPI.class);
         Call<List<Product>> listCall = productAPI.getPopularProduct();
@@ -105,7 +105,6 @@ public class DashboardActivity extends AppCompatActivity {
             }
 
 
-
             @Override
             public void onFailure(Call<List<Product>> call, Throwable t) {
                 Toast.makeText(DashboardActivity.this, "failed" + t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
@@ -117,7 +116,7 @@ public class DashboardActivity extends AppCompatActivity {
         recentcall.enqueue(new Callback<List<Product>>() {
             @Override
             public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
-                if(!response.isSuccessful()){
+                if (!response.isSuccessful()) {
                     Toast.makeText(DashboardActivity.this, "", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -135,33 +134,32 @@ public class DashboardActivity extends AppCompatActivity {
                 Toast.makeText(DashboardActivity.this, "failed" + t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+        loadCurrentUser();
+
     }
 
 
-
     private void loadCurrentUser() {
+        UsersAPI userLoginAPI = Url.getInstance().create(UsersAPI.class);
+        Call<User> userLoginCall = userLoginAPI.getUserDetails(Url.token);
 
-        UsersAPI usersAPI = Url.getInstance().create(UsersAPI.class);
-        Call<User> userCall = usersAPI.getUserDetails(Url.token);
-
-        userCall.enqueue(new Callback<User>() {
+        userLoginCall.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
-                if (!response.isSuccessful()) {
-                    Toast.makeText(DashboardActivity.this, "Code " + response.code(), Toast.LENGTH_SHORT).show();
+                if(!response.isSuccessful()){
+                    Toast.makeText(DashboardActivity.this, "Code" + response.code(), Toast.LENGTH_SHORT).show();
                     return;
                 }
+
                 String imgPath = Url.imagePath + response.body().getImage();
 
                 Picasso.get().load(imgPath).into(icon);
-
             }
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
-                Toast.makeText(DashboardActivity.this, "Error" + t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(DashboardActivity.this, "Errors" + t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
             }
-
         });
     }
 

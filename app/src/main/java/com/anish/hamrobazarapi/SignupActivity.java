@@ -13,6 +13,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -32,6 +33,7 @@ import com.anish.hamrobazarapi.url.Url;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -45,20 +47,19 @@ import retrofit2.Retrofit;
 
 public class SignupActivity extends AppCompatActivity {
     private CircleImageView imgProfile;
-    private EditText etEmail, etFullname, etPwd, etPassword, etPhone,etMobilephone, etStreet,etArea;
+    private EditText etEmail, etFullname, etPwd, etPassword, etPhone, etMobilephone, etStreet, etArea;
     private Spinner etCity;
     private Button btnRegister;
-    private CheckBox chkHidephone,chkNewsletter,chkAgree;
+    private CheckBox chkHidephone, chkNewsletter, chkAgree;
     String imagePath;
     private String imageName = "";
 
     public static final String city[] = {
-            "Kathmandu" ,
+            "Kathmandu",
             "New Delhi",
             "London",
             "Ottawa"
     };
-
 
 
     @Override
@@ -67,7 +68,7 @@ public class SignupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_signup);
 
         ArrayAdapter arrayAdapter = new ArrayAdapter<>(
-                this,android.R.layout.simple_list_item_1,city
+                this, android.R.layout.simple_list_item_1, city
         );
 
         imgProfile = findViewById(R.id.imgProfile);
@@ -98,7 +99,7 @@ public class SignupActivity extends AppCompatActivity {
                 if (etPassword.getText().toString().equals(etPwd.getText().toString())) {
 //                    Toast.makeText(SignupActivity.this, "heres", Toast.LENGTH_SHORT).show();
 //                    return;
-                    if(validate()) {
+                    if (validate()) {
                         saveImageOnly();
                         signUp();
                     }
@@ -111,36 +112,44 @@ public class SignupActivity extends AppCompatActivity {
             }
         });
     }
+
+    private boolean validEmail(String email) {
+        Pattern pattern = Patterns.EMAIL_ADDRESS;
+        return pattern.matcher(email).matches();
+    }
+
     private boolean validate() {
-        boolean status=true;
-        if(etEmail.getText().toString().length()==0){
-            etEmail.setError("Enter your email address");
-            status=false;
+        boolean status = true;
+
+        if (!validEmail(etEmail.getText().toString())) {
+            etEmail.setError("Enter Email address");
+            status = false;
         }
-        if(etFullname.getText().toString().length()==0){
+
+        if (etFullname.getText().toString().length() == 0) {
             etFullname.setError("Enter your full name");
-            status=false;
+            status = false;
         }
 
         if (etPwd.getText().toString().length() < 6) {
             etPwd.setError("Minimum 6 character");
-            status=false;
+            status = false;
         }
-        if(etPhone.getText().toString().length()==0){
+        if (etPhone.getText().toString().length() == 0) {
             etPhone.setError("Enter your phone number");
-            status=false;
+            status = false;
         }
-        if(etMobilephone.getText().toString().length()==0){
+        if (etMobilephone.getText().toString().length() == 0) {
             etMobilephone.setError("Enter your mobile number");
-            status=false;
+            status = false;
         }
-        if(etStreet.getText().toString().length()==0){
+        if (etStreet.getText().toString().length() == 0) {
             etStreet.setError("Enter your street address");
-            status=false;
+            status = false;
         }
-        if(etArea.getText().toString().length()==0){
+        if (etArea.getText().toString().length() == 0) {
             etArea.setError("Enter your Area address");
-            status=false;
+            status = false;
         }
         chkNewsletter.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -223,16 +232,16 @@ public class SignupActivity extends AppCompatActivity {
         String email = etEmail.getText().toString();
         String password = etPwd.getText().toString();
         Integer phone = Integer.parseInt(etPhone.getText().toString());
-        Integer mobilePhone =Integer.parseInt( etMobilephone.getText().toString());
+        Integer mobilePhone = Integer.parseInt(etMobilephone.getText().toString());
         String street = etStreet.getText().toString();
         String area = etArea.getText().toString();
         String city = etCity.getSelectedItem().toString();
-        boolean newsletter = Boolean.parseBoolean(String.valueOf(chkNewsletter.isChecked()?true:false));
-        boolean hidePhone = Boolean.parseBoolean(String.valueOf(chkHidephone.isChecked()?true:false));
-        boolean agree = Boolean.parseBoolean(String.valueOf(chkAgree.isChecked()?true:false));
+        boolean newsletter = Boolean.parseBoolean(String.valueOf(chkNewsletter.isChecked() ? true : false));
+        boolean hidePhone = Boolean.parseBoolean(String.valueOf(chkHidephone.isChecked() ? true : false));
+        boolean agree = Boolean.parseBoolean(String.valueOf(chkAgree.isChecked() ? true : false));
 
 
-        User users = new User(fullName, email, password,phone,mobilePhone,street,area,city,newsletter,hidePhone,agree,imageName);
+        User users = new User(fullName, email, password, phone, mobilePhone, street, area, city, newsletter, hidePhone, agree, imageName);
 
         UsersAPI usersAPI = Url.getInstance().create(UsersAPI.class);
         Call<SignupResponse> signUpCall = usersAPI.registerUser(users);
@@ -255,13 +264,13 @@ public class SignupActivity extends AppCompatActivity {
         });
 
     }
-    private void CheckPermission()
-    {
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED ||ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED )
-        {
-            ActivityCompat.requestPermissions(this,new String[]{
-                    Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE},0);
+
+    private void CheckPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{
+                    Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
         }
     }
+
 
 }
