@@ -1,6 +1,7 @@
 package com.anish.hamrobazarapi.adapter;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -18,20 +19,33 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.Viewhold
     Context context;
     List<Product> productList;
 
+    public ProductAdapter(Context context, List<Product> productList) {
+        this.context = context;
+        this.productList = productList;
+    }
+
     @NonNull
     @Override
     public Viewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return null;
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.activity_listed_ads,parent,false);
+
+        return new Viewholder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull Viewholder holder, int position) {
-
+        Product product = productList.get(position);
+        holder.imgProduct.setImageResource(product.getImage());
+        holder.tvName.setText(product.getName());
+        holder.tvCondition.setText(product.getType());
+        holder.tvPrice.setText(product.getPrice());
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return productList.size();
+
     }
 
     public class Viewholder extends RecyclerView.ViewHolder {

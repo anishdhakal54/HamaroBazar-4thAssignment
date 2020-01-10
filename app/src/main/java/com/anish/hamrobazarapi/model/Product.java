@@ -7,7 +7,6 @@ public class Product {
     private Boolean popular;
     private Integer image;
 
-
     public Product(String name, Integer price, String type, Boolean popular, Integer image) {
         this.name = name;
         this.price = price;

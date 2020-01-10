@@ -1,6 +1,7 @@
 package com.anish.hamrobazarapi;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Dialog;
@@ -13,7 +14,22 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
+
+import com.anish.hamrobazarapi.API.ProductAPI;
+import com.anish.hamrobazarapi.API.UsersAPI;
+import com.anish.hamrobazarapi.adapter.ProductAdapter;
+import com.anish.hamrobazarapi.model.Product;
+import com.anish.hamrobazarapi.model.User;
+import com.anish.hamrobazarapi.url.Url;
+import com.squareup.picasso.Picasso;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class DashboardActivity extends AppCompatActivity {
 
@@ -57,86 +73,72 @@ public class DashboardActivity extends AppCompatActivity {
 //                ShowPopup(v);
             }
         });
+        int images[]={R.drawable.yamaha,R.drawable.car,R.drawable.bike,R.drawable.house,R.drawable.furnitures,R.drawable.music};
 
-//
-//        myDialog= new Dialog(this);
-//
-//
-//        final Toolbar  toolbar = findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
+        vflipper=findViewById(R.id.vflipper);
 
 
 
+        for (int image:images)
+        {
+            flipperimages(image);
+        }
 
+        //recycleview first
+        recyclerView = findViewById(R.id.recyclerView);
+        LinearLayoutManager manager = new LinearLayoutManager(DashboardActivity.this);
+        recyclerView.setLayoutManager(manager);
+        recyclerView.setHasFixedSize(true);
+        ProductAPI productAPI = Url.getInstance().create(ProductAPI.class);
+        Call<List<Product>> listCall = productAPI.getRecentProduct();
+        listCall.enqueue(new Callback<List<Product>>() {
+            @Override
+            public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
+                List<Product> product = response.body();
 
-//        btnSignUp.setOnClickListener(new View.OnClickListener() {
-//
-//            @Override
-//            public void onClick(View v) {
-//
-//                toolbar.dismissPopupMenus();
-////                Intent intent = new Intent(DashboardActivity.this, SignupActivity.class);
-////                startActivity(intent);
-//
-//            }
-//        });
+                ProductAdapter productAdapter = new ProductAdapter(DashboardActivity.this, product);
+                recyclerView.setAdapter(productAdapter);
+                recyclerView.setLayoutManager(new LinearLayoutManager(DashboardActivity.this,LinearLayoutManager.HORIZONTAL, false));
 
-//        btnSignUp.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(DashboardActivity.this, SignupActivity.class);
-//                startActivity(intent);
-//            }
-//        });
+            }
 
-
-
-
-//
-//        recyclerView=findViewById(R.id.recyclerView);
-//
-//        List<TreandingAds> treandingAdsList=new ArrayList<>();
-//        treandingAdsList.add(new TreandingAds("Samsung Phone","40000",R.drawable.bike,"Brand New"));
-//
-//        TrendingAdsAdapter trendingAdsAdapter=new TrendingAdsAdapter(this,treandingAdsList);
-//        recyclerView.setAdapter(trendingAdsAdapter);
-//        recyclerView.setLayoutManager(
-//                (new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false)));
-//
-//        recyclerViewSecond=findViewById(R.id.recyclerViewSecond);
-//
-//        List<ListedAds> listedAdsList=new ArrayList<>();
-//        listedAdsList.add(new ListedAds("Samsung Phone","40000",R.drawable.bike,"Brand New"));
-//
-//        ListedAdsAdapter listedAdsAdapter=new ListedAdsAdapter(this,listedAdsList);
-//        recyclerViewSecond.setAdapter(listedAdsAdapter);
-//        recyclerViewSecond.setLayoutManager(
-//                (new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false)));
-//
-//
-//        int images[]={R.drawable.yamaha,R.drawable.car,R.drawable.bike,R.drawable.house,R.drawable.furnitures,R.drawable.music};
-//
-//        vflipper=findViewById(R.id.vflipper);
-//
-//
-//
-//        for (int image:images)
-//        {
-//            flipperimages(image);
-//        }
+            @Override
+            public void onFailure(Call<List<Product>> call, Throwable t) {
+                Toast.makeText(DashboardActivity.this, "failed" + t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
-    private void ShowPopup(View v) {
 
-        myDialog.setContentView(R.layout.activity_login);
+    private void loadCurrentUser() {
 
-        myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        myDialog.show();
+        UsersAPI usersAPI = Url.getInstance().create(UsersAPI.class);
+        Call<User> userCall = usersAPI.getUserDetails(Url.token);
+
+        userCall.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (!response.isSuccessful()) {
+                    Toast.makeText(DashboardActivity.this, "Code " + response.code(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                String imgPath = Url.imagePath + response.body().getImage();
+
+                Picasso.get().load(imgPath).into(icon);
+
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Toast.makeText(DashboardActivity.this, "Error" + t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            }
+
+        });
     }
 
     public void flipperimages (int image)
     {
-        ImageView imageView=new ImageView(this);
+        ImageView imageView = new ImageView(this);
         imageView.setBackgroundResource(image);
 
         vflipper.addView(imageView);
@@ -144,8 +146,7 @@ public class DashboardActivity extends AppCompatActivity {
         vflipper.setAutoStart(true);
 
         //animation
-        vflipper.setInAnimation(this,android.R.anim.slide_in_left);
-        vflipper.setOutAnimation(this,android.R.anim.slide_out_right);
-
+        vflipper.setInAnimation(this, android.R.anim.slide_in_left);
+        vflipper.setOutAnimation(this, android.R.anim.slide_out_right);
     }
 }
